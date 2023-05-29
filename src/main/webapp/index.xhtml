@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xml:lang="en"
+>
+<ui:composition template="templates/basic.xhtml">
+    <ui:define name="title"> Wordle Game </ui:define>
+    <ui:define name="top">
+        <h:link value="WORDLE" outcome="/index.xhtml" />
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <h:outputText value="Remaining Attempts: #{wordleGameBean.remainingAttempts}"/>
+            <br/>
+            <h:outputText value="Enter 5-letter guess: " rendered="#{wordleGameBean.remainingAttempts > 0}"/>
+            <h:inputText value="#{wordleGameBean.currentGuess}" maxlength="5"
+                         rendered="#{wordleGameBean.remainingAttempts > 0 and !wordleGameBean.gameWon}">
+                <f:validateRegex pattern="[a-zA-Z]+"/>
+                <f:validateLength minimum="5" maximum="5"/>
+            </h:inputText>
+            <h:commandButton value="Guess" action="#{wordleGameBean.guess()}"
+                             rendered="#{wordleGameBean.remainingAttempts > 0}"/>
+
+            <h:outputText value="Game Over. The word was #{wordleGameBean.getTargetWord()}"
+                          rendered="#{wordleGameBean.remainingAttempts == 0}"/>
+
+            <h:outputText value="You won! The word was #{wordleGameBean.getTargetWord()}"
+                          rendered="#{wordleGameBean.gameWon}"/>
+
+            <h:dataTable value="#{wordleGameBean.previousGuesses}" var="guess">
+                <h:column>
+                    <h:outputText value="#{guess.guessItems[0].letter}" styleClass="letter-#{guess.guessItems[0].feedback}"/>
+                </h:column>
+                <h:column>
+                    <h:outputText value="#{guess.guessItems[1].letter}" styleClass="letter-#{guess.guessItems[1].feedback}"/>
+                </h:column>
+                <h:column>
+                    <h:outputText value="#{guess.guessItems[2].letter}" styleClass="letter-#{guess.guessItems[2].feedback}"/>
+                </h:column>
+                <h:column>
+                    <h:outputText value="#{guess.guessItems[3].letter}" styleClass="letter-#{guess.guessItems[3].feedback}"/>
+                </h:column>
+                <h:column>
+                    <h:outputText value="#{guess.guessItems[4].letter}" styleClass="letter-#{guess.guessItems[4].feedback}"/>
+                </h:column>
+            </h:dataTable>
+
+            <h:commandButton value="Restart" action="#{wordleGameBean.restart()}" immediate="true"/>
+        </h:form>
+
+        <h:panelGroup rendered="#{not empty facesContext.messages}">
+            <h:messages/>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
+</html>
